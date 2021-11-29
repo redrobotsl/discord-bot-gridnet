@@ -9,5 +9,7 @@
 
 
 ## Installation
-
-bruh only I'll be doing this anyway
+ Figure it out. 
+ 
+ All Zones are hard coded into the Transmit commands and other stuff, ideally, this would be put into a database, or pulled from Gridnet regularly and it would automatically make the channels available for transmitting. 
+ 
