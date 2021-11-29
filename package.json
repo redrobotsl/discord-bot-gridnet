@@ -1,0 +1,44 @@
+{
+  "name": "guidebot",
+  "version": "6.1.0",
+  "description": "A boilerplate example bot with command handler and reloadable commands. Updated and Maintained by the Idiot's Guide Community",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "prepublish": "node util/setup.js"
+  },
+  "engines": {
+    "node": ">=12"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/An-Idiots-Guide/guidebot-class.git"
+  },
+  "author": "Jacob Fear",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/An-Idiots-Guide/guidebot-class/issues"
+  },
+  "homepage": "https://github.com/An-Idiots-Guide/guidebot-class#readme",
+  "dependencies": {
+    "better-sqlite3": "^5.4.1",
+    "chalk": "^2.4.1",
+    "discord.js": "^12.1.1",
+    "enmap": "^5.0.1",
+    "follow-redirects": "^1.13.1",
+    "klaw": "^2.1.1",
+    "moment": "^2.22.2",
+    "moment-duration-format": "^2.2.2",
+    "readline-sync": "^1.4.9"
+  },
+  "devDependencies": {
+    "eslint": "^6.0.1",
+    "eslint-config-airbnb-base": "^11.3.2",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-plugin-import": "^2.18.1",
+    "eslint-plugin-node": "^5.2.1",
+    "eslint-plugin-promise": "^3.8.0",
+    "eslint-plugin-standard": "^3.1.0"
+  }
+}
