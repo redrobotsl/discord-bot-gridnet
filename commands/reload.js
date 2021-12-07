@@ -1,29 +1,35 @@
-const Command = require("../base/Command.js");
-
-class Reload extends Command {
-  constructor (client) {
-    super(client, {
-      name: "reload",
-      description: "Reloads a command that has been modified.",
-      category: "System",
-      usage: "reload [command]",
-      permLevel: "Bot Admin"
-    });
+const config = require("../config.js");
+const { settings } = require("../modules/settings.js");
+exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
+  // Grab the container from the client to reduce line length.
+  const { container } = client;
+  const replying = settings.ensure(message.guild.id, config.defaultSettings).commandReply;
+  if (!args || args.length < 1) return message.reply("Must provide a command name to reload.");
+  const command = container.commands.get(args[0]) || container.commands.get(container.aliases.get(args[0]));
+  // Check if the command exists and is valid
+  if (!command) {
+    return message.reply("That command does not exist");
   }
+  // the path is relative to the *current folder*, so just ./filename.js
+  delete require.cache[require.resolve(`./${command.help.name}.js`)];
+  // We also need to delete and reload the command from the container.commands Enmap
+  container.commands.delete(command.help.name);
+  const props = require(`./${command.help.name}.js`);
+  container.commands.set(command.help.name, props);
 
-  async run (message, args, level) { // eslint-disable-line no-unused-vars
-    if (!args || args.size < 1) return message.reply("Must provide a command to reload. Derp.");
-    
-    const commands = this.client.commands.get(args[0]) || this.client.commands.get(this.client.aliases.get(args[0]));
-    if (!commands) return message.reply(`The command \`${args[0]}\` does not exist, nor is it an alias.`);
+  message.reply({ content: `The command \`${command.help.name}\` has been reloaded`, allowedMentions: { repliedUser: (replying === "true") }});
+};
 
-    let response = await this.client.unloadCommand(commands.conf.location, commands.help.name);
-    if (response) return message.reply(`Error Unloading: ${response}`);
+exports.conf = {
+  enabled: true,
+  guildOnly: false,
+  aliases: [],
+  permLevel: "Bot Admin"
+};
 
-    response = this.client.loadCommand(commands.conf.location, commands.help.name);
-    if (response) return message.reply(`Error loading: ${response}`);
-
-    message.reply(`The command \`${commands.help.name}\` has been reloaded`);
-  }
-}
-module.exports = Reload;
+exports.help = {
+  name: "reload",
+  category: "System",
+  description: "Reloads a command that\"s been modified.",
+  usage: "reload [command]"
+};

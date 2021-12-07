@@ -3,39 +3,50 @@
 // can be used to do **anything** on your machine, from stealing information to
 // purging the hard drive. DO NOT LET ANYONE ELSE USE THIS
 
+const { codeBlock } = require("@discordjs/builders");
+
+/*
+  MESSAGE CLEAN FUNCTION
+
+  "Clean" removes @everyone pings, as well as tokens, and makes code blocks
+  escaped so they're shown more easily. As a bonus it resolves promises
+  and stringifies objects!
+  This is mostly only used by the Eval and Exec commands.
+*/
+async function clean(client, text) {
+  if (text && text.constructor.name == "Promise")
+    text = await text;
+  if (typeof text !== "string")
+    text = require("util").inspect(text, {depth: 1});
+
+  text = text
+    .replace(/`/g, "`" + String.fromCharCode(8203))
+    .replace(/@/g, "@" + String.fromCharCode(8203));
+
+  text = text.replaceAll(client.token, "[REDACTED]");
+
+  return text;
+}
 
 // However it's, like, super ultra useful for troubleshooting and doing stuff
 // you don't want to put in a command.
-const Command = require("../base/Command.js");
+exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
+  const code = args.join(" ");
+  const evaled = eval(code);
+  const cleaned = await clean(client, evaled);
+  message.channel.send(codeBlock("js", cleaned));
+};
 
-class Eval extends Command {
-  constructor (client) {
-    super(client, {
-      name: "eval",
-      description: "Evaluates arbitrary Javascript.",
-      category:"System",
-      usage: "eval <expression>",
-      aliases: ["ev"],
-      permLevel: "Bot Owner"
-    });
-  }
+exports.conf = {
+  enabled: true,
+  guildOnly: false,
+  aliases: [],
+  permLevel: "Bot Owner"
+};
 
-  async run (message, args, level) { // eslint-disable-line no-unused-vars
-    const code = args.join(" ");
-    try {
-      const evaled = eval(code);
-      const clean = await this.client.clean(evaled);
-      // sends evaled output as a file if it exceeds the maximum character limit
-      // 6 graves, and 2 characters for "js"
-      const MAX_CHARS = 3 + 2 + clean.length + 3;
-      if (MAX_CHARS > 2000) {
-      //  message.channel.send("Output exceeded 2000 characters. Sending as a file.", { files: [{ attachment: Buffer.from(clean), name: "output.txt" }] });
-      }
-    //  message.channel.send(`\`\`\`js\n${clean}\n\`\`\``);
-    } catch (err) {
-     // message.channel.send(`\`ERROR\` \`\`\`xl\n${await this.client.clean(this.client, err)}\n\`\`\``);
-    }
-  }
-}
-
-module.exports = Eval;
+exports.help = {
+  name: "eval",
+  category: "System",
+  description: "Evaluates arbitrary javascript.",
+  usage: "eval [...code]"
+};

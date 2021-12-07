@@ -1,32 +1,29 @@
-const Command = require("../base/Command.js");
 var https = require('follow-redirects').https;
 var fs = require('fs');
 var config = require("../config.js");
-var network = "1578";
+var network = "1878";
 var options = {
   'method': 'POST',
   'hostname': 'gridnet.nexus-sl.net',
-  'path': '/api/index.php?=null',
+  'path': '/api/index.php',
   'headers': {
     'Content-Type': 'application/x-www-form-urlencoded'
   },
   'maxRedirects': 20
 };
 var qs = require('querystring');
-class Transmit extends Command {
-  constructor (client) {
-    super(client, {
-      name: "transmit",
-      description: "Transmit",
-      category: "GridNet",
-      guildOnly: true,
-      usage: "transmit Message",
-      aliases: ["transmit"],
-    });
-  }
-/// This is what happens when the command is called
-  async run (message,tweet, level) { // eslint-disable-line no-unused-vars
-    try {
+exports.run = async (client, message, [channel, content], level) => { // eslint-disable-line no-unused-vars
+
+
+
+/////
+////
+/////
+////
+
+
+
+
 
 
 
@@ -55,12 +52,9 @@ var actualdamninfo = body;
   });
 });
 /// Make it happen then go back to end
-var goon  = tweet.shift()
-var sending = tweet.join(" ");
-var twit = "";
-console.log(goon);
-console.log(tweet);
-if(goon == "jcso"){
+console.log(channel);
+console.log(message);
+if(channel == "jcso"){
 twit  = {
   action: "transmit_message",
   transmit_level: "channel",
@@ -69,11 +63,11 @@ twit  = {
  zone_id: "2585",
   callsign: message.settings.callsign,
   use_discord: "TRUE",
-  message: sending
+  message: content
 }
 }   
       
-else if(goon == "mpd"){
+else if(channel == "mpd"){
 twit  = {
   action: "transmit_message",
   transmit_level: "channel",
@@ -82,11 +76,11 @@ twit  = {
   zone_id: "2585",
   callsign: message.settings.callsign,
   use_discord: "TRUE",
-  message: sending
+  message: content
 }
 
 }
-else if(goon == "jcfr"){
+else if(channel == "jcfr"){
 twit  = {
   action: "transmit_message",
   transmit_level: "channel",
@@ -95,10 +89,10 @@ twit  = {
   zone_id: "2586",
   callsign: message.settings.callsign,
   use_discord: "TRUE",
-  message: sending
+  message: content
 }
 }
-else if(goon == "msmc"){
+else if(channel == "msmc"){
 twit  = {
   action: "transmit_message",
   transmit_level: "channel",
@@ -107,18 +101,18 @@ twit  = {
   zone_id: "2586",
   callsign: message.settings.callsign,
   use_discord: "TRUE",
-  message: sending
+  message: content
 }
 
 }
-else if(goon == "county"){
+else if(channel == "county"){
 twit  = {
   action: "transmit_message",
   transmit_level: "global",
   network_id: network,
   callsign: message.settings.callsign,
   use_discord: "TRUE",
-  message: sending
+  message: content
 }
 }
 
@@ -141,10 +135,52 @@ var postData = qs.stringify({
 req.write(postData);
 
 req.end();
-    } catch (e) {
-      console.log(e);
-    }
-  }
-}
-module.exports =  Transmit;
 
+
+
+
+
+
+////
+//
+///
+/////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+};
+
+exports.conf = {
+  enabled: true,
+  guildOnly: true,
+  aliases: [],
+  permLevel: "User"
+};
+
+exports.help = {
+  name: "transmit",
+  category: "Gridnet",
+  description: "The Essential Command. Used to transmit into the network of SL. Kinda cringe my guy. ",
+  usage: "transmit"
+};

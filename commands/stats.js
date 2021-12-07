@@ -1,28 +1,31 @@
-const Command = require("../base/Command.js");
 const { version } = require("discord.js");
-const moment = require("moment");
-require("moment-duration-format");
+const { codeBlock } = require("@discordjs/builders");
+const { DurationFormatter } = require("@sapphire/time-utilities");
+const durationFormatter = new DurationFormatter();
 
-class Stats extends Command {
-  constructor (client) {
-    super(client, {
-      name: "stats",
-      description: "Gives some useful bot statistics.",
-      usage: "stats",
-    });
-  }
-
-  async run (message, args, level) { // eslint-disable-line no-unused-vars
-    const duration = moment.duration(this.client.uptime).format(" D [days], H [hrs], m [mins], s [secs]");
-    message.channel.send(`= STATISTICS =
+exports.run = (client, message, args, level) => { // eslint-disable-line no-unused-vars
+  const duration = durationFormatter.format(client.uptime);
+  const stats = codeBlock("asciidoc", `= STATISTICS =
   • Mem Usage  :: ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)} MB
   • Uptime     :: ${duration}
-  • Users      :: ${this.client.users.cache.size.toLocaleString()}
-  • Servers    :: ${this.client.guilds.cache.size.toLocaleString()}
-  • Channels   :: ${this.client.channels.cache.size.toLocaleString()}
+  • Users      :: ${client.guilds.cache.map(g => g.memberCount).reduce((a, b) => a + b).toLocaleString()}
+  • Servers    :: ${client.guilds.cache.size.toLocaleString()}
+  • Channels   :: ${client.channels.cache.size.toLocaleString()}
   • Discord.js :: v${version}
-  • Node       :: ${process.version}`, {code: "asciidoc"});
-  }
-}
+  • Node       :: ${process.version}`);
+  message.channel.send(stats);
+};
 
-module.exports = Stats;
+exports.conf = {
+  enabled: true,
+  guildOnly: false,
+  aliases: [],
+  permLevel: "User"
+};
+
+exports.help = {
+  name: "stats",
+  category: "Miscellaneous",
+  description: "Gives some useful bot statistics",
+  usage: "stats"
+};
