@@ -1,15 +1,16 @@
+const logger = require("../modules/Logger.js");
+const { settings } = require("../modules/settings.js");
+
 // This event executes when a new guild (server) is left.
 
-module.exports = class {
-  constructor (client) {
-    this.client = client;
-  }
+module.exports = (client, guild) => {
+  if (!guild.available) return; // If there is an outage, return.
+  
+  logger.log(`[GUILD LEAVE] ${guild.id} removed the bot.`);
 
-  async run (guild) {
-
-    this.client.user.setActivity(`Not Giving a Dimmmadamn`);
-    // Well they're gone. Let's remove them from the settings and log it!
-    this.client.settings.delete(guild.id);
-    this.client.logger.log(`Left guild: ${guild.name} (${guild.id}) with ${guild.memberCount} members`);
+  // If the settings Enmap contains any guild overrides, remove them.
+  // No use keeping stale data!
+  if (settings.has(guild.id)) {
+    settings.delete(guild.id);
   }
 };

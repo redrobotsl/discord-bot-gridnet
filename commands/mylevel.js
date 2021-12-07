@@ -1,19 +1,21 @@
-const Command = require("../base/Command.js");
+const config = require("../config.js");
+const { settings } = require("../modules/settings.js");
+exports.run = async (client, message, args, level) => {
+  const friendly = config.permLevels.find(l => l.level === level).name;
+  const replying = settings.ensure(message.guild.id, config.defaultSettings).commandReply;
+  message.reply({ content: `Your permission level is: ${level} - ${friendly}`, allowedMentions: { repliedUser: (replying === "true") }});
+};
 
-class MyLevel extends Command {
-  constructor (client) {
-    super(client, {
-      name: "mylevel",
-      description: "Displays your permission level for your location.",
-      usage: "mylevel",
-      guildOnly: true
-    });
-  }
+exports.conf = {
+  enabled: true,
+  guildOnly: true,
+  aliases: [],
+  permLevel: "User"
+};
 
-  async run (message, args, level) {
-    const friendly = this.client.config.permLevels.find(l => l.level === level).name;
-    message.reply(`Your permission level is: ${level} - ${friendly}`);
-  }
-}
-
-module.exports = MyLevel;
+exports.help = {
+  name: "mylevel",
+  category: "Miscellaneous",
+  description: "Tells you your permission level for the current message location.",
+  usage: "mylevel"
+};
