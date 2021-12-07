@@ -1,6 +1,7 @@
 const logger = require("./Logger.js");
 const config = require("../config.js");
 const { settings } = require("./settings.js");
+const { gnet } = require("./gnet.js");
 // Let's start by getting some useful functions that we'll use throughout
 // the bot, like logs and elevation features.
 
@@ -47,6 +48,15 @@ function getSettings(guild) {
   // This "..." thing is the "Spread Operator". It's awesome!
   // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax
   return ({...settings.get("default"), ...guildConf});
+}
+
+// getSettings merges the client defaults with the guild settings. guild settings in
+// enmap should only have *unique* overrides that are different from defaults.
+function getGnet(guild) {
+  gnet.ensure("default", config.defaultGnet);
+  if (!guild) return gnet.get("default");
+  const guildGnet = gnet.get(guild.id) || {};
+  return ({...gnet.get("default"), ...guildGnet});
 }
 
 /*
